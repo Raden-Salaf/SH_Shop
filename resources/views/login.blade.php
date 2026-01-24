@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -12,132 +12,142 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Custom Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap" rel="stylesheet">
-
     <style>
         body {
-            font-family: 'Oswald', sans-serif;
-            background: radial-gradient(circle, #111 0%, #000 100%);
+            background: radial-gradient(circle at center, #3b0000, #140000, #000);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
-            color: white;
         }
 
-        .title-text {
-            font-size: 32px;
-            font-weight: 600;
-            color: #c40000;
-            text-shadow: 0 0 10px rgba(255, 0, 0, .7);
+        /* Glow arena merah */
+        .arena {
+            border: 2px solid rgba(255, 0, 0, 0.6);
+            box-shadow: 0 0 20px rgba(255, 0, 0, .8), inset 0 0 15px rgba(255, 0, 0, .6);
+            transition: 0.3s;
         }
 
-        /* Lightning Flash */
-        @keyframes lightning {
-            0%, 20%, 100% {
-                opacity: 0;
-            }
-            5% {
-                opacity: .8;
-            }
+        .arena:hover {
+            box-shadow: 0 0 30px rgba(255, 50, 50, .9), inset 0 0 20px rgba(255, 0, 0, .7);
         }
 
-        .lightning {
+        /* petir */
+        .petir {
+            width: 50px;
+            height: 80px;
+            background: linear-gradient(to bottom, yellow, white, transparent);
+            clip-path: polygon(50% 0%, 60% 25%, 40% 25%, 65% 60%, 55% 60%, 75% 100%, 30% 70%, 45% 70%, 30% 35%, 50% 35%);
             position: absolute;
-            top: -30px;
-            right: 20px;
-            width: 120px;
-            animation: lightning 3.5s infinite;
-            filter: drop-shadow(0 0 15px rgba(255,255,0,.8));
+            opacity: 0;
+            animation: strike 1.2s infinite linear;
         }
 
-        /* Kujang/Belati Falling */
-        @keyframes fall {
+        @keyframes strike {
             0% {
-                transform: translateY(-150px) rotate(0deg);
                 opacity: 0;
+                transform: translateY(-40px) rotate(10deg);
             }
-            20% {
+
+            40% {
                 opacity: 1;
+                transform: translateY(20px);
             }
+
             100% {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0.2;
+                opacity: 0;
+                transform: translateY(120px) rotate(-10deg);
             }
         }
 
+        /* Kujang + belati ASCII jatuh */
         .weapon {
             position: absolute;
-            top: -100px;
-            width: 32px;
-            animation: fall linear infinite;
-            opacity: 0.8;
-            filter: drop-shadow(0 0 5px gold);
+            font-size: 22px;
+            color: #e6e6e6;
+            opacity: .8;
+            animation: jatuh 4s linear infinite;
+        }
+
+        @keyframes jatuh {
+            0% {
+                transform: translateY(-40px) rotate(0deg);
+                opacity: .0;
+            }
+
+            30% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(600px) rotate(270deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Lightning -->
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Lightning_icon.svg/240px-Lightning_icon.svg.png"
-         class="lightning">
-
-    <!-- Falling weapons (randomized) -->
+    <!-- ICON jatuh -->
     <script>
-        for (let i = 0; i < 12; i++) {
-            const img = document.createElement('img');
-            img.src = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Kujang_Bogor.png";
-            img.className = "weapon";
-            img.style.left = Math.random() * 100 + "vw";
-            img.style.animationDuration = (3 + Math.random() * 4) + "s";
-            img.style.animationDelay = (Math.random() * 3) + "s";
-            document.body.appendChild(img);
-        }
+        const senjata = ["🗡️", "⚔️", "🔪", "🗡️", "⚔️"];
+        setInterval(() => {
+            const el = document.createElement("div");
+            el.className = "weapon";
+            el.innerHTML = senjata[Math.floor(Math.random() * senjata.length)];
+            el.style.left = Math.random() * window.innerWidth + "px";
+            el.style.animationDuration = (3 + Math.random() * 2) + "s";
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 5000);
+        }, 800);
     </script>
 
+    <!-- 3 Petir -->
+    <div class="petir" style="left:10%; animation-delay:0s"></div>
+    <div class="petir" style="left:50%; animation-delay:.4s"></div>
+    <div class="petir" style="left:80%; animation-delay:.8s"></div>
 
-    <div class="container flex items-center justify-center min-h-screen">
-        <div class="col-md-4">
-            <div class="bg-black bg-opacity-70 p-6 rounded-xl shadow-2xl border-2 border-red-800">
-                <h2 class="text-center title-text">PENCAK STORE</h2>
-                <p class="text-center text-gray-300 -mt-1 text-sm">Toko Pencak Terlengkap</p>
-                <hr class="border-gray-700">
+    <div class="container flex justify-center pt-32">
+        <div class="arena bg-black/40 p-6 rounded-xl w-[350px] text-white backdrop-blur-sm">
+            <h2 class="text-center text-3xl font-bold tracking-widest mb-2">Pencak Store</h2>
+            <p class="text-center text-sm text-red-300 mb-4">Toko Pencak Terlengkap</p>
+            <hr class="border-red-400">
 
-                @if (session('error'))
-                    <div class="alert alert-danger text-black">
-                        <b>Opps!</b> {{ session('error') }}
-                    </div>
-                @endif
+            @if (session('error'))
+                <div class="alert alert-danger mt-3"> <b>Opps!</b> {{ session('error') }} </div>
+            @endif
 
-                <form action="{{ route('actionlogin') }}" method="post">
-                    @csrf
+            <form action="{{ route('actionlogin') }}" method="post" id="loginForm">
+                @csrf
+                <label class="mt-3">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
 
-                    <label class="text-gray-300">Email</label>
-                    <input type="email" name="email"
-                        class="form-control mb-3 bg-gray-900 text-white border-red-800"
-                        placeholder="Email" required>
+                <label class="mt-3">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
 
-                    <label class="text-gray-300">Password</label>
-                    <input type="password" name="password"
-                        class="form-control mb-4 bg-gray-900 text-white border-red-800"
-                        placeholder="Password" required>
+                <button type="submit"
+                    class="btn btn-danger btn-block w-full mt-4 font-bold tracking-widest shadow-lg hover:bg-red-700 transition-all"
+                    id="loginBtn">
+                    LOGIN
+                </button>
 
-                    <button type="submit"
-                        class="btn btn-danger btn-block text-lg font-semibold tracking-wider shadow-lg"
-                        style="background:#a00000;border-color:#900000;">
-                        Masuk
-                    </button>
-
-                    <hr class="border-gray-800">
-                    <p class="text-center text-gray-400">Belum punya akun?
-                        <a href="/register" class="text-red-500 hover:text-red-300">
-                            Daftar Sekarang
-                        </a></p>
-                </form>
-            </div>
+                <p class="text-center mt-4">Belum punya akun? <a href="/register" class="text-red-300">Register</a></p>
+            </form>
         </div>
     </div>
+
+    <!-- Sound Tebasan -->
+    <audio id="tebasSound">
+        <source src="https://www.myinstants.com/media/sounds/sword-slash.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.getElementById("loginBtn").addEventListener("click", function () {
+            const s = document.getElementById("tebasSound");
+            s.volume = 0.4;
+            s.play();
+        });
+    </script>
 
 </body>
 </html>
